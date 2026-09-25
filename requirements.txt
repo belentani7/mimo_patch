@@ -1,0 +1,41 @@
+# MIMO PATCH - Dependencias mínimas
+# Instalar con: pip install -r requirements.txt
+
+# ─── Núcleo (SIEMPRE necesarias) ──────────────────────────────
+pydantic>=2.0.0
+instructor>=1.0.0
+openai>=1.0.0
+
+# ─── MCP (opcional — modo stub si no está) ───────────────────
+# Si no se instala, mimo_patch usa mcp_stub.py automáticamente
+mcp>=0.9.0
+
+# ─── Extras v3 (opcionales, recomendados para producción) ────
+pyyaml>=6.0.1
+python-dotenv>=1.0.1
+rich>=13.7.0
+
+# ─── Servidor HTTP (opcional) ────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+httpx>=0.27.0
+
+# ─── Memoria (opcional — fallback JSONL si falta) ────────────
+redis>=5.0.0            # memoria corto plazo (fallback JSONL si falta)
+psycopg[binary]>=3.1.0  # memoria largo plazo pgvector (fallback JSONL si falta)
+
+# ─── Skills reales (opcionales) ──────────────────────────────
+stripe>=10.0.0          # skill apply_stripe_refund (stub si falta)
+
+# ─── Tests ──────────────────────────────────────────────────
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+
+# ─── Evaluación (opcional) ───────────────────────────────────
+# braintrust>=0.0.120
+# langsmith>=0.1.0
+
+# ─── Ollama (sin paquete Python) ────────────────────────────
+# Instalar Ollama aparte desde https://ollama.com
+# y luego: ollama pull qwen2.5:7b-instruct
+# (no requiere paquete Python adicional — usa el endpoint OpenAI-compatible)
