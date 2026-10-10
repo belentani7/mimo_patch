@@ -197,12 +197,14 @@ def _build_mcp_server():
     """
     mcp, is_stub = get_mcp("mimo-router")
 
-    @mcp.tool()
+    # Nombres explícitos: README y system-one-router.json prometen
+    # `mimo_route` y `mimo_cache_stats`; fn.__name__ daria *_tool.
+    @mcp.tool(name="mimo_route")
     def mimo_route_tool(state: str, force_heavy: bool = False) -> dict:
         """Enruta un estado System One. Devuelve decision tipada + plan."""
         return mimo_route(state, force_heavy=force_heavy)
 
-    @mcp.tool()
+    @mcp.tool(name="mimo_cache_stats")
     def mimo_cache_stats_tool() -> dict:
         """Stats del cache de decisiones."""
         return mimo_cache_stats()

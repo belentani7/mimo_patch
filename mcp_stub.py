@@ -28,9 +28,10 @@ class _StubMCP:
         self.name = name
         self._tools: dict[str, Callable[..., Any]] = {}
 
-    def tool(self):
+    def tool(self, name: str | None = None):
+        """Compatible con FastMCP: @mcp.tool() o @mcp.tool(name='...')."""
         def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
-            self._tools[fn.__name__] = fn
+            self._tools[name or fn.__name__] = fn
             # Conservamos nombre y docstring para tools/list
             return fn
         return decorator
