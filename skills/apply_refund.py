@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""apply_refund.py — Skill de reembolso genérico (no Stripe)."""
+"""Generic refund proposal. No provider is wired; never invent a refund ID."""
 from __future__ import annotations
 from typing import Any
 from .base import SkillBase
@@ -7,16 +7,11 @@ from .base import SkillBase
 
 class ApplyRefundSkill(SkillBase):
     name = "apply_refund"
-    description = "Procesa un reembolso genérico."
+    description = "Propone un reembolso; requiere aprobación e integración verificable."
 
     def run(self, state: str, decision: dict[str, Any]) -> dict[str, Any]:
-        # Aquí iría la llamada real a BD / ORM
-        # Por ahora devolvemos un stub con el estado procesado
         return {
-            "success": True,
-            "output": {
-                "refund_id": f"RFD-{abs(hash(state)) % 100000:05d}",
-                "status": "pending_review",
-                "processed_state_preview": state[:200],
-            },
+            "success": False,
+            "error": "refund_not_configured: approval and verified provider required",
+            "output": {"executed": False, "status": "requires_approval"},
         }
