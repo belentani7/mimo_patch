@@ -14,7 +14,8 @@ class IgnoreSpamSkill(SkillBase):
         return {
             "success": True,
             "output": {
-                "ignored": True,
+                "ignored": False,
+                "classification_only": True,
                 "spam_score": decision.get("confidence", 0.99),
                 "no_action_taken": True,
             },
