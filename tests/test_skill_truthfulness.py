@@ -53,3 +53,12 @@ def test_sensitive_skill_registry_points_to_fail_closed_implementations():
         registered = get_skill(skill_type.name)
         assert isinstance(registered, skill_type)
         assert registered.run("sensitive", {})["success"] is False
+
+
+def test_spam_classification_does_not_claim_mailbox_action():
+    from skills import IgnoreSpamSkill
+    result = IgnoreSpamSkill().run("untrusted message", {"confidence": 0.97})
+    assert result["success"] is True
+    assert result["output"]["classification_only"] is True
+    assert result["output"]["ignored"] is False
+    assert result["output"]["no_action_taken"] is True
