@@ -6,8 +6,9 @@ Cada skill es un módulo Python con:
   - run(state: str, decision: dict) -> dict
   - SCHEMA (opcional): esquema de argumentos aceptados
 
-Las skills son llamadas por el agente OpenCode externo cuando
-mimo_route devuelve plan=EXECUTE_NOW y is_safe_to_execute=True.
+El router propone decisiones, pero nunca acredita aprobación externa.
+Las skills sensibles no ejecutan efectos reales hasta integrar un flujo
+de autorización verificable y proveedor auditado.
 """
 from .base import SkillBase, SkillResult
 from .apply_refund import ApplyRefundSkill
