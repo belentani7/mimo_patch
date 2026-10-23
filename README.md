@@ -8,14 +8,14 @@
 
 Un **único archivo Python** (`mimo_patch.py`) que actúa como **enrutador de Sistema 1** (System One) — inspirado en Jev AI (TypeSafe AI) y la arquitectura XML del prompt filtrado de Claude Fable 5.1.
 
-El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segura, urgente y qué skill ejecutar. Si es seguro y la confianza es alta, ejecuta sin pedir permiso.
+El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segura, urgente y qué skill ejecutar. La confianza sirve para clasificar, pero nunca concede autorización para reembolsos, bloqueos, correos ni tickets. Las integraciones sensibles actuales fallan de forma segura.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ OpenCode CLI (agente externo)                                    │
 │   Lee opencode/system-one-router.json                            │
 │   Aplica reglas: conf<0.85 → pedir aclaración                    │
-│                  conf≥0.85 && urg≥0.7 → ejecutar sin permiso     │
+│                  conf≥0.85 && urg≥0.7 → proponer; nunca autorizar efectos externos     │
 │                  conf≥0.85 && urg<0.7 → proponer y esperar       │
 └──────────────────┬──────────────────────────────────────────────┘
                    │ (stdio JSON-RPC)
@@ -41,7 +41,7 @@ El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segu
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Skills ejecutadas (solo si is_safe_to_execute && conf≥0.85)      │
+│ Skills propuestas (sin efectos externos implementados ni aprobados)      │
 │   · apply_refund / apply_stripe_refund                           │
 │   · escalate_support                                             │
 │   · block_fraud                                                  │
@@ -49,6 +49,10 @@ El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segu
 │   · send_email                                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+## Estado real de las skills sensibles
+
+`apply_refund`, `apply_stripe_refund`, `block_fraud`, `escalate_support` y `send_email` **NO ejecutan operaciones externas**. Devuelven `success=false`, `executed=false` y `status=requires_approval` hasta que exista una integración auditada con autorización humana verificable. No generan IDs de reembolso, bloqueo o ticket ficticios ni envían correos por disponer de credenciales SMTP. La clasificación del router no constituye consentimiento. `ignore_spam` solo clasifica sin actuar sobre una bandeja real.
 
 ## Instalación rápida
 
