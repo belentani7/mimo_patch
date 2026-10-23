@@ -22,8 +22,15 @@ class TestDecideActionPlan:
     def test_ask_clarification_when_low_confidence(self):
         assert decide_action_plan(True, 0.5, 0.99) == "ASK_CLARIFICATION"
 
-    def test_execute_now_when_urgent(self):
-        assert decide_action_plan(True, 0.9, 0.8) == "EXECUTE_NOW"
+    def test_high_urgency_does_not_grant_auto_execution(self):
+        assert decide_action_plan(True, 0.9, 0.8) == "PROPOSE_AND_WAIT"
+
+    @pytest.mark.parametrize("action", [
+        "apply_refund", "apply_stripe_refund", "block_fraud",
+        "send_email", "ignore_spam", "escalate_support",
+    ])
+    def test_side_effects_require_approval_even_with_perfect_confidence(self, action):
+        assert decide_action_plan(True, 1.0, 1.0, chosen_action=action) == "PROPOSE_AND_WAIT"
 
     def test_propose_when_low_urgency(self):
         assert decide_action_plan(True, 0.9, 0.5) == "PROPOSE_AND_WAIT"
@@ -135,5 +142,5 @@ class TestCLI:
         assert result.returncode == 0
         out = json.loads(result.stdout)
         assert out["dry_run"] is True
-        assert out["plan"] in ("EXECUTE_NOW", "PROPOSE_AND_WAIT",
+        assert out["plan"] in ("PROPOSE_AND_WAIT",
                                 "ASK_CLARIFICATION", "BLOCKED")

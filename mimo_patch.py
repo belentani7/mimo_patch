@@ -72,20 +72,31 @@ def decide_action_plan(
     is_safe: bool,
     confidence: float,
     urgency: float,
+    chosen_action: str | None = None,
 ) -> str:
     """
     Traduce la decisión a un plan según las 4 reglas del system-one-router.json:
       1. is_safe=False → BLOCKED
       2. confidence < 0.85 → ASK_CLARIFICATION
-      3. is_safe=True AND confidence≥0.85 AND urgency≥0.7 → EXECUTE_NOW
-      4. is_safe=True AND confidence≥0.85 AND urgency<0.7 → PROPOSE_AND_WAIT
+      3. High urgency does not authorize side effects automatically.
+      4. Any proposed skill with real-world side effects → PROPOSE_AND_WAIT
     """
     if not is_safe:
         return "BLOCKED"
     if confidence < CONFIDENCE_THRESHOLD:
         return "ASK_CLARIFICATION"
-    if urgency >= URGENCY_AUTORUN_THRESHOLD:
-        return "EXECUTE_NOW"
+    # Side effects require explicit owner approval regardless of urgency or
+    # LLM confidence. No provider score grants money/identity/email authority.
+    sensitive = {
+        "apply_refund", "apply_stripe_refund", "block_fraud",
+        "send_email", "ignore_spam", "escalate_support",
+    }
+    if chosen_action in sensitive:
+        return "PROPOSE_AND_WAIT"
+    if urgency >= URGENCY_AUTORUN_THRESHOLD and chosen_action is None:
+        # Legacy callers may classify urgency without selecting a skill.
+        # Execution still requires an explicitly scoped tool integration.
+        return "PROPOSE_AND_WAIT"
     return "PROPOSE_AND_WAIT"
 
 
@@ -166,6 +177,7 @@ def mimo_route(state: str, force_heavy: bool = False) -> dict[str, Any]:
         is_safe=result.get("is_safe_to_execute", False),
         confidence=result.get("confidence", 0.0),
         urgency=result.get("urgency_score", 0.0),
+        chosen_action=result.get("chosen_action"),
     )
     result["gate"] = g.model_dump()
     result["cache"] = "miss"
@@ -291,6 +303,7 @@ def _cli() -> int:
                 g.is_safe,
                 0.5 if g.use_heavy_prompt else 0.9,
                 g.urgency_score,
+                chosen_action=g.suggested_action,
             ),
             "gate": g.model_dump(),
             "dry_run": True,
