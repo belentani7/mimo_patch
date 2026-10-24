@@ -19,6 +19,8 @@ class TermuxInstallerSafetyTests(unittest.TestCase):
     def test_default_is_read_only_from_foreign_cwd(self):
         with tempfile.TemporaryDirectory(prefix="mimo installer spaces ") as directory:
             foreign = pathlib.Path(directory)
+            before_venv = (ROOT / ".venv").exists()
+            before_logs = (ROOT / "logs").exists()
             result = subprocess.run(["bash", str(INSTALLER)], cwd=foreign,
                                     capture_output=True, text=True, timeout=10)
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -26,8 +28,8 @@ class TermuxInstallerSafetyTests(unittest.TestCase):
             self.assertIn("sin cambios", result.stdout)
             self.assertFalse((foreign / ".venv").exists())
             self.assertFalse((foreign / "logs").exists())
-            self.assertFalse((ROOT / ".venv").exists())
-            self.assertFalse((ROOT / "logs").exists())
+            self.assertEqual((ROOT / ".venv").exists(), before_venv)
+            self.assertEqual((ROOT / "logs").exists(), before_logs)
 
     @unittest.skipUnless(shutil.which("bash"), "Bash not available")
     def test_explicit_dry_run_and_invalid_flags(self):
