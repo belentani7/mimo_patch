@@ -22,7 +22,7 @@ El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segu
                    ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ mimo_patch.py serve-mcp                                           │
-│  ├─ Intenta cargar mcp>=1.0.0  →  FastMCP real                   │
+│  ├─ Intenta cargar mcp>=0.9.0  →  FastMCP real                   │
 │  └─ Si falla                    →  _StubMCP (mcp_stub.py)         │
 │  Tools expuestas: mimo_route, mimo_cache_stats                   │
 └──────────────────┬──────────────────────────────────────────────┘
@@ -236,9 +236,9 @@ Copia `opencode/system-one-router.json` a tu directorio `.opencode/agents/` y Op
 
 OpenCode invocará las tools `mimo_route` y `mimo_cache_stats` vía JSON-RPC sobre stdio del proceso `python mimo_patch.py serve-mcp`.
 
-## Auditoría de integración (76 ideas rastreadas)
+## Inventario histórico declarado (cobertura no verificada)
 
-Integrados los 76 conceptos de las conversaciones previas:
+La tabla reproduce afirmaciones históricas del proyecto; no acredita por sí sola integración, compatibilidad ni pruebas completas:
 
 | Categoría | v2 | v3 |
 |-----------|----|----|
@@ -247,17 +247,17 @@ Integrados los 76 conceptos de las conversaciones previas:
 | Entrypoints CLI | 1 (gate.py) | 2 (`gate.py` + `mimo_patch.py`) |
 | Modo degradado | ❌ | ✅ `mcp_stub.py` + `notification.py` |
 | Cache de decisiones | ❌ | ✅ `cache.py` (LRU 512) |
-| Umbrales exactos OpenCode | ❌ | ✅ conf≥0.85 / urg≥0.7 |
-| Plan de acción explícito | ❌ | ✅ `EXECUTE_NOW` / `PROPOSE_AND_WAIT` / `ASK_CLARIFICATION` / `BLOCKED` |
-| Instalador Termux | ⚠️ genérico | ✅ específico |
-| Compatibilidad JSON original | parcial | ✅ exacta |
+| Umbrales OpenCode | ❌ | Clasificación por confianza/urgencia; nunca autorización de efectos externos |
+| Plan de acción explícito | ❌ | `PROPOSE_AND_WAIT` / `ASK_CLARIFICATION` / `BLOCKED` (acciones sensibles) |
+| Instalador Termux | ⚠️ genérico | Vista previa por defecto; `--execute` obligatorio para instalar |
+| Compatibilidad JSON original | parcial | Pendiente de prueba integral |
 | Mental Reframing | ✅ | ✅ en prompt + gate |
 | Sensitive topics | ✅ | ✅ en gate + memory |
-| Hard guardrail local | ✅ | ✅ NUNCA bypassable |
+| Patrones de bloqueo local | presente | Heurísticos; no sustituyen revisión ni controles de autorización |
 
 ## Licencia
 
-Uso libre. Créditos a:
+El código incluye un archivo `LICENSE`; los derechos y licencias de ideas, prompts y activos de terceros requieren comprobación antes de redistribuir. Créditos históricos:
 - **TypeSafe AI** (Diogo Almeida) por Jev AI y la arquitectura System One.
 - **Pliny the Liberator** por el leak del System Prompt de Claude Fable 5 / 5.1.
 - **Anthropic** por las ideas de `<tone_and_formatting>`, Mental Reframing y memory policy.
