@@ -2,11 +2,11 @@
 
 > **Fusión de**: Fable 5.1 (XML structured prompts) + Pydantic strict typing + Jev AI (System One routing) + OpenCode MCP + Python glue code.
 >
-> Estado del arte para septiembre 2026.
+> Prototipo experimental; las integraciones y los resultados de proveedores requieren validación independiente.
 
 ## Qué es
 
-Un **único archivo Python** (`mimo_patch.py`) que actúa como **enrutador de Sistema 1** (System One) — inspirado en Jev AI (TypeSafe AI) y la arquitectura XML del prompt filtrado de Claude Fable 5.1.
+Un **punto de entrada Python** (`mimo_patch.py`) con módulos auxiliares que actúa como **enrutador de Sistema 1** (System One) — inspirado en Jev AI (TypeSafe AI) y la arquitectura XML del prompt filtrado de Claude Fable 5.1.
 
 El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segura, urgente y qué skill ejecutar. La confianza sirve para clasificar, pero nunca concede autorización para reembolsos, bloqueos, correos ni tickets. Las integraciones sensibles actuales fallan de forma segura.
 
@@ -58,18 +58,22 @@ El parche decide **ANTES** de llamar a cualquier LLM caro si una acción es segu
 
 ### Termux (Android/Huawei)
 ```bash
-bash install/install_termux.sh
+bash install/install_termux.sh          # previsualización sin cambios
+bash install/install_termux.sh --execute # instala en Termux (con red y paquetes)
 ```
 
 ### Windows 11
 ```powershell
-powershell -ExecutionPolicy Bypass -File install/install.ps1
+powershell -NoProfile -File install/install.ps1          # previsualización sin cambios
+powershell -NoProfile -File install/install.ps1 -Execute # instala en .venv (con red)
 ```
 
 ### Linux/Mac estándar
 ```bash
-pip install -r requirements.txt
-cp .env.example .env  # rellena tus API keys
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+# Las API keys son opcionales: configura variables de entorno manualmente.
+# Los instaladores no generan archivos .env ni ejecutan skills o modelos.
 ```
 
 ## Uso
@@ -103,7 +107,7 @@ python mimo_patch.py dry-run --state "usuario pregunta horario"
 
 | Variable | Default | Descripción |
 |----------|---------|-------------|
-| `MIMO_CONFIDENCE_THRESHOLD` | `0.85` | Umbral de confianza para ejecutar |
+| `MIMO_CONFIDENCE_THRESHOLD` | `0.85` | Umbral de confianza para clasificar, NO autoriza ejecución |
 | `MIMO_LOG_LEVEL` | `WARNING` | DEBUG\|INFO\|WARNING\|ERROR |
 | `MIMO_CACHE_FILE` | `./logs/cache.jsonl` | Persistencia del cache |
 | `MIMO_NOTIFY_FILE` | `./logs/notify.jsonl` | Log de NOTIFY_HUMAN |
@@ -169,7 +173,6 @@ mimo_patch/
 ├── glue/
 │   └── django_saleor_example.py  # Ejemplo pegamento con Django/Saleor
 ├── logs/                  # Cache, notify, decisions JSONL
-├── .env.example
 ├── requirements.txt
 ├── Makefile
 └── README.md
@@ -181,10 +184,10 @@ mimo_patch/
 |-----------|------|
 | `is_safe_to_execute=false` | `BLOCKED` |
 | `confidence < 0.85` | `ASK_CLARIFICATION` |
-| `is_safe=true` AND `confidence≥0.85` AND `urgency≥0.7` | `EXECUTE_NOW` |
+| `is_safe=true` AND `confidence≥0.85` AND `urgency≥0.7` | `PROPOSE_AND_WAIT` (sin autorización implícita) |
 | `is_safe=true` AND `confidence≥0.85` AND `urgency<0.7` | `PROPOSE_AND_WAIT` |
 
-## Hard guardrails (NUNCA bypassable)
+## Patrones de bloqueo heurístico (no sustituyen autorización ni pruebas de seguridad)
 
 - **SQL injection**: `OR 1=1`, `UNION SELECT`, `DROP TABLE`, `INSERT INTO`, `DELETE FROM`, `EXEC(`, `xp_cmdshell`
 - **Banking data**: card numbers (13-16 dígitos), IBAN, SSN, CVV
@@ -194,8 +197,8 @@ mimo_patch/
 ## Por qué esto es "Mimo Code" (código mínimo)
 
 1. **Agnóstico**: Lo puedes meter en un bot de Discord, una web de Django o un script de automatización.
-2. **No consume tokens de salida narrativos**: Pydantic + prompt estricto evitan "Hola, claro que sí, he analizado tu petición y...".
-3. **Mantenimiento cero**: Si cambias de provider de IA (de OpenAI a Jev o Anthropic), solo cambias la línea de `model`. El resto no se entera.
+2. **Respuestas estructuradas**: Pydantic valida la forma de salida; las llamadas a modelos remotos sí pueden consumir tokens y generar costes.
+3. **Mantenimiento explícito**: Los cambios de proveedor exigen comprobar compatibilidad, credenciales, costes y regresiones.
 4. **Modo stub automático**: Si `mcp` no está instalado, `_StubMCP` entra solo.
 5. **Fallback gracioso**: Si Redis/PG no están, usa JSONL. Si todos los providers fallan, NOTIFY_HUMAN.
 
