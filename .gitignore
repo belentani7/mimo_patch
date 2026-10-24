@@ -22,6 +22,9 @@ target/
 *.tgz
 
 # Logs y temporales
+# Las decisiones y notificaciones JSONL pueden contener datos privados.
+logs/
+*.jsonl
 *.log
 *.pid
 .tmp/
