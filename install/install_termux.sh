@@ -1,48 +1,58 @@
 #!/usr/bin/env bash
-# install/install_termux.sh — Termux (Android/Huawei)
-# Instala el MIMO PATCH en Termux sin requerir root.
+# MIMO PATCH — Termux installer. Preview by default; no root required.
 set -euo pipefail
 
-echo "▶ System One Gate v3 (MIMO PATCH) — Termux install"
+PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+if [[ ! -f "$PROJECT_DIR/mimo_patch.py" ]]; then
+    printf 'Error: no se encontró mimo_patch.py junto al instalador.\n' >&2
+    exit 2
+fi
 
-# Update packages
+if [[ $# -gt 1 ]]; then
+    printf 'Uso: bash install/install_termux.sh [--dry-run|--execute]\n' >&2
+    exit 2
+fi
+case "${1:---dry-run}" in
+    --dry-run)
+        printf 'MIMO PATCH — vista previa (sin cambios).\n'
+        printf 'Directorio del proyecto: %s\n' "$PROJECT_DIR"
+        printf 'Con --execute: pkg update/install, crear .venv, instalar dependencias y crear logs.\n'
+        printf 'No se ejecutarán servicios, modelos remotos ni skills sensibles.\n'
+        exit 0
+        ;;
+    --execute) ;;
+    *)
+        printf 'Uso: bash install/install_termux.sh [--dry-run|--execute]\n' >&2
+        exit 2
+        ;;
+esac
+
+if ! command -v pkg >/dev/null 2>&1; then
+    printf 'Error: --execute requiere Termux y su comando pkg; no se ha instalado nada.\n' >&2
+    exit 2
+fi
+cd -- "$PROJECT_DIR"
+printf 'MIMO PATCH — instalación explícita en %s\n' "$PROJECT_DIR"
 pkg update -y
 pkg install -y python git rust binutils libffi openssl
 
-# Create venv (opcional pero recomendado)
-if [ ! -d .venv ]; then
+if [[ ! -d .venv ]]; then
     python -m venv .venv
 fi
-source .venv/bin/activate
-pip install --upgrade pip wheel
+VENV_PY="$PROJECT_DIR/.venv/bin/python"
+if [[ ! -x "$VENV_PY" ]]; then
+    printf 'Error: el entorno virtual no contiene un Python ejecutable.\n' >&2
+    exit 1
+fi
 
-# Dependencias mínimas (siempre)
-pip install pydantic instructor openai pyyaml python-dotenv rich
-
-# MCP opcional (modo stub si falla)
-pip install "mcp>=0.9.0" 2>/dev/null || \
-    echo "⚠️ mcp no instalable — modo stub activado (mcp_stub.py)"
-
-# Opcionales (no fallan si no se pueden instalar)
-pip install "fastapi>=0.111.0" "uvicorn[standard]>=0.30.0" 2>/dev/null || \
-    echo "⚠️ fastapi no instalable — sin servidor HTTP (uso CLI normal)"
-pip install "pytest>=8.2.0" 2>/dev/null || \
-    echo "⚠️ pytest no instalable — sin tests"
-pip install "redis>=5.0.0" 2>/dev/null || \
-    echo "⚠️ redis no instalable — memoria en JSONL"
-pip install "psycopg[binary]>=3.1.0" 2>/dev/null || \
-    echo "⚠️ psycopg no instalable — memoria en JSONL"
-
-# Crear estructura de logs
-mkdir -p logs skills prompts
-
-# Copiar .env si no existe
-cp -n .env.example .env 2>/dev/null || true
-
-echo ""
-echo "✓ Instalado."
-echo "  Activa el venv:  source .venv/bin/activate"
-echo "  Configura:       nano .env  (rellena API keys si tienes)"
-echo "  Prueba:          python mimo_patch.py self-test"
-echo "  Classify:        python mimo_patch.py classify --state 'usuario chargeback 502'"
-echo "  MCP server:      python mimo_patch.py serve-mcp"
+# Instalar siempre dentro del venv; nunca usar el pip global ni actualizarlo.
+"$VENV_PY" -m pip install pydantic instructor openai pyyaml python-dotenv rich
+"$VENV_PY" -m pip install 'mcp>=0.9.0' || printf 'Aviso: MCP no disponible; modo stub.\n' >&2
+"$VENV_PY" -m pip install 'fastapi>=0.111.0' 'uvicorn[standard]>=0.30.0' || printf 'Aviso: servidor HTTP opcional no disponible.\n' >&2
+"$VENV_PY" -m pip install 'pytest>=8.2.0' || printf 'Aviso: pytest opcional no disponible.\n' >&2
+"$VENV_PY" -m pip install 'redis>=5.0.0' || printf 'Aviso: Redis opcional no disponible.\n' >&2
+"$VENV_PY" -m pip install 'psycopg[binary]>=3.1.0' || printf 'Aviso: PostgreSQL opcional no disponible.\n' >&2
+mkdir -p -- logs
+printf 'Instalación terminada. Activa: source "%s/.venv/bin/activate"\n' "$PROJECT_DIR"
+printf 'Variables de API: configúralas en el entorno solo si autorizas llamadas externas.\n'
+printf 'Prueba local: "%s" mimo_patch.py self-test\n' "$VENV_PY"
