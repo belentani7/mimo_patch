@@ -1,58 +1,62 @@
-# install/install.ps1 — Windows 11 (PowerShell)
-# Instala el MIMO PATCH en Windows sin requerir admin.
-$ErrorActionPreference = "Stop"
+# MIMO PATCH — Windows installer. Preview by default; no admin required.
+param(
+    [switch]$Execute,
+    [switch]$DryRun
+)
+$ErrorActionPreference = 'Stop'
 
-Write-Host "▶ System One Gate v3 (MIMO PATCH) — Windows 11 install" -ForegroundColor Cyan
-
-# Verificar Python
-$py = Get-Command python -ErrorAction SilentlyContinue
-if (-not $py) {
-    Write-Host "❌ Python no encontrado. Instálalo desde https://python.org" -ForegroundColor Red
-    exit 1
+if ($Execute -and $DryRun) {
+    throw 'Usa -Execute o -DryRun, no ambos.'
+}
+$ProjectDir = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
+if (-not (Test-Path -LiteralPath (Join-Path $ProjectDir 'mimo_patch.py') -PathType Leaf)) {
+    throw 'No se encontró mimo_patch.py junto al instalador.'
+}
+if (-not $Execute) {
+    Write-Host 'MIMO PATCH - vista previa (sin cambios).'
+    Write-Host "Directorio del proyecto: $ProjectDir"
+    Write-Host 'Con -Execute: crear .venv, instalar dependencias Python y crear logs.'
+    Write-Host 'No se ejecutarán servicios, modelos remotos ni skills sensibles.'
+    return
 }
 
-# Crear venv si no existe
-if (-not (Test-Path .venv)) {
-    python -m venv .venv
+$PythonCommand = Get-Command python -ErrorAction SilentlyContinue
+if (-not $PythonCommand) {
+    throw 'Python no encontrado en PATH. No se ha instalado nada.'
 }
-& .\.venv\Scripts\Activate.ps1
 
-python -m pip install --upgrade pip wheel
-
-# Dependencias mínimas
-pip install pydantic instructor openai pyyaml python-dotenv rich
-
-# MCP opcional
+Push-Location -LiteralPath $ProjectDir
 try {
-    pip install "mcp>=0.9.0" 2>$null
-    Write-Host "✓ MCP instalado (FastMCP real)" -ForegroundColor Green
-} catch {
-    Write-Host "⚠️ mcp no instalable — modo stub activado (mcp_stub.py)" -ForegroundColor Yellow
-}
-
-# Opcionales
-$optionals = @("fastapi>=0.111.0", "uvicorn[standard]>=0.30.0", "pytest>=8.2.0", "redis>=5.0.0")
-foreach ($pkg in $optionals) {
-    try {
-        pip install $pkg 2>$null | Out-Null
-    } catch {
-        Write-Host "⚠️ $pkg no instalable — skip" -ForegroundColor Yellow
+    if (-not (Test-Path -LiteralPath '.venv' -PathType Container)) {
+        & $PythonCommand.Source -m venv .venv
+        if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear .venv.' }
     }
+    $VenvPython = Join-Path $ProjectDir '.venv\Scripts\python.exe'
+    if (-not (Test-Path -LiteralPath $VenvPython -PathType Leaf)) {
+        throw 'El entorno virtual no contiene python.exe.'
+    }
+    # Usar siempre Python del entorno virtual, sin cambiar ExecutionPolicy ni PATH.
+    & $VenvPython -m pip install pydantic instructor openai pyyaml python-dotenv rich
+    if ($LASTEXITCODE -ne 0) { throw 'Falló la instalación de dependencias mínimas.' }
+
+    $OptionalPackages = @(
+        'mcp>=0.9.0',
+        'fastapi>=0.111.0',
+        'uvicorn[standard]>=0.30.0',
+        'pytest>=8.2.0',
+        'redis>=5.0.0'
+    )
+    foreach ($Package in $OptionalPackages) {
+        & $VenvPython -m pip install $Package
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Dependencia opcional no disponible: $Package"
+        }
+    }
+    New-Item -ItemType Directory -Force -Path 'logs' | Out-Null
+    Write-Host "Instalación terminada. Python local: $VenvPython"
+    Write-Host 'Configura variables de API solo si autorizas llamadas externas.'
+    Write-Host ('Prueba local: "' + $VenvPython + '" mimo_patch.py self-test')
 }
-
-# Crear estructura
-New-Item -ItemType Directory -Force -Path logs, skills, prompts | Out-Null
-
-# Copiar .env si no existe
-if (-not (Test-Path .env)) {
-    Copy-Item .env.example .env
-    Write-Host "✓ Creado .env (rellénalo con tus API keys)" -ForegroundColor Green
+finally {
+    Pop-Location
 }
-
-Write-Host ""
-Write-Host "✓ Instalado." -ForegroundColor Green
-Write-Host "  Activa el venv:  .\.venv\Scripts\Activate.ps1"
-Write-Host "  Configura:       notepad .env"
-Write-Host "  Prueba:          python mimo_patch.py self-test"
-Write-Host "  Classify:        python mimo_patch.py classify --state 'usuario chargeback 502'"
-Write-Host "  MCP server:      python mimo_patch.py serve-mcp"
