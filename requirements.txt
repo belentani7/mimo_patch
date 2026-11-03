@@ -28,7 +28,7 @@ psycopg[binary]>=3.1.0  # memoria largo plazo pgvector (fallback JSONL si falta)
 stripe>=10.0.0          # skill apply_stripe_refund (stub si falta)
 
 # ─── Tests ──────────────────────────────────────────────────
-pytest>=8.2.0
+pytest>=9.2.0
 pytest-asyncio>=0.23.0
 
 # ─── Evaluación (opcional) ───────────────────────────────────
