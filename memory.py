@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 memory.py — Memoria jerárquica con fallback graceful.
 
@@ -15,11 +14,10 @@ from __future__ import annotations
 
 import json
 import os
-import time
 import threading
+import time
 from pathlib import Path
-from typing import Any, Optional
-
+from typing import Any
 
 # Sensitive topics (igual que gate.py SENSITIVE_TOPICS)
 SENSITIVE_TOPICS_LOWER = {
@@ -41,10 +39,10 @@ NEVER_PERSIST_PATTERNS = [
 class MemoryStore:
     """Interface común para corto y largo plazo."""
 
-    def get(self, key: str) -> Optional[dict[str, Any]]:
+    def get(self, key: str) -> dict[str, Any] | None:
         raise NotImplementedError
 
-    def put(self, key: str, value: dict[str, Any], topic: Optional[str] = None) -> None:
+    def put(self, key: str, value: dict[str, Any], topic: str | None = None) -> None:
         raise NotImplementedError
 
     def search(self, query: str, k: int = 5) -> list[dict[str, Any]]:
@@ -63,20 +61,19 @@ class JSONLMemory(MemoryStore):
         self._path.touch(exist_ok=True)
         self._lock = threading.Lock()
 
-    def get(self, key: str) -> Optional[dict[str, Any]]:
-        with self._lock:
-            with self._path.open("r", encoding="utf-8") as f:
-                for line in f:
-                    try:
-                        entry = json.loads(line)
-                        if entry.get("key") == key:
-                            return entry.get("value")
-                    except json.JSONDecodeError:
-                        continue
+    def get(self, key: str) -> dict[str, Any] | None:
+        with self._lock, self._path.open("r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    if entry.get("key") == key:
+                        return entry.get("value")
+                except json.JSONDecodeError:
+                    continue
         return None
 
     def put(self, key: str, value: dict[str, Any],
-            topic: Optional[str] = None) -> None:
+            topic: str | None = None) -> None:
         if _should_skip_persist(value, topic):
             return
         entry = {
@@ -85,26 +82,24 @@ class JSONLMemory(MemoryStore):
             "topic": topic,
             "ts": time.time(),
         }
-        with self._lock:
-            with self._path.open("a", encoding="utf-8") as f:
-                f.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
+        with self._lock, self._path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
 
     def search(self, query: str, k: int = 5) -> list[dict[str, Any]]:
         """Búsqueda simple por substring (sin embeddings)."""
         results = []
-        with self._lock:
-            with self._path.open("r", encoding="utf-8") as f:
-                for line in f:
-                    try:
-                        entry = json.loads(line)
-                        v = entry.get("value", {})
-                        # Match en cualquier valor string
-                        for vv in (v.values() if isinstance(v, dict) else [v]):
-                            if isinstance(vv, str) and query.lower() in vv.lower():
-                                results.append(entry)
-                                break
-                    except json.JSONDecodeError:
-                        continue
+        with self._lock, self._path.open("r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    v = entry.get("value", {})
+                    # Match en cualquier valor string
+                    for vv in (v.values() if isinstance(v, dict) else [v]):
+                        if isinstance(vv, str) and query.lower() in vv.lower():
+                            results.append(entry)
+                            break
+                except json.JSONDecodeError:
+                    continue
         return results[:k]
 
     def is_available(self) -> bool:
@@ -124,7 +119,7 @@ class RedisMemory(MemoryStore):
         except Exception:
             self._redis = None
 
-    def get(self, key: str) -> Optional[dict[str, Any]]:
+    def get(self, key: str) -> dict[str, Any] | None:
         if not self._redis:
             return None
         try:
@@ -134,7 +129,7 @@ class RedisMemory(MemoryStore):
             return None
 
     def put(self, key: str, value: dict[str, Any],
-            topic: Optional[str] = None, ttl: int = 3600) -> None:
+            topic: str | None = None, ttl: int = 3600) -> None:
         if not self._redis or _should_skip_persist(value, topic):
             return
         try:
@@ -194,7 +189,7 @@ class PgVectorMemory(MemoryStore):
         except Exception:
             self._conn = None
 
-    def get(self, key: str) -> Optional[dict[str, Any]]:
+    def get(self, key: str) -> dict[str, Any] | None:
         if not self._conn:
             return None
         try:
@@ -206,7 +201,7 @@ class PgVectorMemory(MemoryStore):
             return None
 
     def put(self, key: str, value: dict[str, Any],
-            topic: Optional[str] = None) -> None:
+            topic: str | None = None) -> None:
         if not self._conn or _should_skip_persist(value, topic):
             return
         try:
@@ -251,7 +246,7 @@ class PgVectorMemory(MemoryStore):
 # ═════════════════════════════════════════════════════════════
 # Sanitización — nunca persistir banking/self-harm
 # ═════════════════════════════════════════════════════════════
-def _should_skip_persist(value: dict[str, Any], topic: Optional[str]) -> bool:
+def _should_skip_persist(value: dict[str, Any], topic: str | None) -> bool:
     """True si el value o topic contienen datos que NUNCA se persisten."""
     if topic and topic.lower() in NEVER_PERSIST_TOPICS:
         return True
@@ -275,9 +270,7 @@ def _sanitize_value(value: dict[str, Any]) -> dict[str, Any]:
     safe = {}
     for k, v in value.items():
         k_lower = k.lower()
-        if any(w in k_lower for w in ("card", "iban", "ssn", "cvv", "password")):
-            safe[k] = "[REDACTED]"
-        elif isinstance(v, str) and _looks_sensitive(v):
+        if any(w in k_lower for w in ("card", "iban", "ssn", "cvv", "password")) or isinstance(v, str) and _looks_sensitive(v):
             safe[k] = "[REDACTED]"
         else:
             safe[k] = v
@@ -293,8 +286,8 @@ def _looks_sensitive(s: str) -> bool:
 
 
 # ─── Singletons con fallback automático ─────────────────────
-_short_term: Optional[MemoryStore] = None
-_long_term: Optional[MemoryStore] = None
+_short_term: MemoryStore | None = None
+_long_term: MemoryStore | None = None
 _init_lock = threading.Lock()
 
 

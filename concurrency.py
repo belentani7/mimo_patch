@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 concurrency.py — Helpers de asincronía para el router.
 
@@ -23,6 +22,7 @@ async def route_one_async(state: str, force_heavy: bool = False) -> dict[str, An
     """Wrapper async para mimo_route — ejecuta en thread pool."""
     import functools
     from concurrent.futures import ThreadPoolExecutor
+
     from mimo_patch import mimo_route  # type: ignore
 
     loop = asyncio.get_running_loop()

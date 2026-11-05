@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 profile.py — Perfil del usuario (Pedro Belentani) y su proyecto.
 
@@ -16,7 +15,6 @@ Información derivada del chat 'Parche Unificador de IA Minimalista':
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -27,7 +25,7 @@ class UserProfile:
     local_models: list[str] = field(default_factory=list)
     priorities: list[str] = field(default_factory=list)
     api_keys_to_use: list[str] = field(default_factory=list)
-    timezone: Optional[str] = None
+    timezone: str | None = None
 
 
 # Perfil hardcodeado del usuario (según el chat)

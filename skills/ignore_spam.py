@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
 """ignore_spam.py — Skill de ignore de spam."""
 from __future__ import annotations
+
 from typing import Any
+
 from .base import SkillBase
 
 

@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
 """Outgoing email skill. A routing decision is never permission to send."""
 from __future__ import annotations
+
 from typing import Any
+
 from .base import SkillBase
 
 

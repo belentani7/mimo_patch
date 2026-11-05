@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 router.py — SystemOneRouter con multi-provider fallback.
 
@@ -14,11 +13,10 @@ El router SIEMPRE devuelve un dict tipado con la misma forma
 """
 from __future__ import annotations
 
-import json
 import os
 import time
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -56,7 +54,7 @@ class SystemOneDecision(BaseModel):
     is_safe_to_execute: bool = Field(
         description="Guardrail de seguridad binario."
     )
-    suggested_skill_id: Optional[str] = Field(
+    suggested_skill_id: str | None = Field(
         default=None,
         description="Skill ID sugerida (opcional, igual a chosen_action)."
     )
@@ -75,7 +73,7 @@ class SystemOneRouter:
         self,
         system_prompt: str,
         skills: list[str],
-        model: Optional[str] = None,
+        model: str | None = None,
     ):
         self.system_prompt = system_prompt
         # Filtrar skills para que coincidan con el enum
@@ -170,7 +168,7 @@ class SystemOneRouter:
         }
 
     # ─── Provider: TypeSafe (Jev) ───────────────────────────
-    def _route_typesafe(self, state: str) -> Optional[dict[str, Any]]:
+    def _route_typesafe(self, state: str) -> dict[str, Any] | None:
         """Llama a Jev AI a través de TypeSafe."""
         if not self.typesafe_key:
             return None
@@ -203,7 +201,7 @@ class SystemOneRouter:
             raise RuntimeError(f"typesafe:{e}")
 
     # ─── Provider: OpenRouter ────────────────────────────────
-    def _route_openrouter(self, state: str) -> Optional[dict[str, Any]]:
+    def _route_openrouter(self, state: str) -> dict[str, Any] | None:
         """Llama vía OpenRouter (puede enrutar a Jev o a un modelo generativo)."""
         if not self.openrouter_key:
             return None
@@ -236,7 +234,7 @@ class SystemOneRouter:
             raise RuntimeError(f"openrouter:{e}")
 
     # ─── Provider: OpenAI ───────────────────────────────────
-    def _route_openai(self, state: str) -> Optional[dict[str, Any]]:
+    def _route_openai(self, state: str) -> dict[str, Any] | None:
         """Llama a OpenAI con JSON mode."""
         if not self.openai_key:
             return None
@@ -265,7 +263,7 @@ class SystemOneRouter:
             raise RuntimeError(f"openai:{e}")
 
     # ─── Provider: Anthropic ─────────────────────────────────
-    def _route_anthropic(self, state: str) -> Optional[dict[str, Any]]:
+    def _route_anthropic(self, state: str) -> dict[str, Any] | None:
         """Llama a Anthropic (Claude) — vía Anthropic SDK si está."""
         if not self.anthropic_key:
             return None
@@ -290,7 +288,7 @@ class SystemOneRouter:
             raise RuntimeError(f"anthropic:{e}")
 
     # ─── Provider: Ollama local ─────────────────────────────
-    def _route_ollama(self, state: str) -> Optional[dict[str, Any]]:
+    def _route_ollama(self, state: str) -> dict[str, Any] | None:
         """Llama a Ollama local (OpenAI-compatible endpoint)."""
         try:
             import instructor
@@ -329,7 +327,12 @@ class SystemOneRouter:
           - 1 keyword trigger   → confidence=0.75
           - 0 triggers (default) → confidence=0.5 (escalate_support)
         """
-        from gate import _keyword_action, _estimate_urgency, _HARD_BLOCK_PATTERNS, _REFRAMING_PATTERNS
+        from gate import (
+            _HARD_BLOCK_PATTERNS,
+            _REFRAMING_PATTERNS,
+            _estimate_urgency,
+            _keyword_action,
+        )
 
         # Mental reframing → block explícito
         for pat in _REFRAMING_PATTERNS:

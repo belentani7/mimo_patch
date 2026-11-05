@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
 """Stripe refunds require an explicitly authorized, validated payment operation."""
 from __future__ import annotations
+
 from typing import Any
+
 from .base import SkillBase
 
 

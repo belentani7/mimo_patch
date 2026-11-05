@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
 """apply_refund.py — Skill de reembolso genérico (no Stripe)."""
 from __future__ import annotations
+
 from typing import Any
+
 from .base import SkillBase
 
 

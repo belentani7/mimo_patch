@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Tests del contrato de tools MCP expuestas por serve-mcp.
 

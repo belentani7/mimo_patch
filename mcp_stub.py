@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 mcp_stub.py — Stub compatible con FastMCP cuando el paquete `mcp>=0.9.0`
 no está instalado.
@@ -18,7 +17,8 @@ from __future__ import annotations
 
 import json
 import sys
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 class _StubMCP:

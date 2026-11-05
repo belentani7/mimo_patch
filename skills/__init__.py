@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 skills package — acciones ejecutables por mimo_route.
 
@@ -9,19 +8,23 @@ Cada skill es un módulo Python con:
 Las skills son llamadas por el agente OpenCode externo cuando
 mimo_route devuelve plan=EXECUTE_NOW y is_safe_to_execute=True.
 """
-from .base import SkillBase, SkillResult
 from .apply_refund import ApplyRefundSkill
 from .apply_stripe_refund import ApplyStripeRefundSkill
-from .escalate_support import EscalateSupportSkill
+from .base import SkillBase, SkillResult
 from .block_fraud import BlockFraudSkill
+from .escalate_support import EscalateSupportSkill
 from .ignore_spam import IgnoreSpamSkill
 from .send_email import SendEmailSkill
 
 __all__ = [
-    "SkillBase", "SkillResult",
-    "ApplyRefundSkill", "ApplyStripeRefundSkill",
-    "EscalateSupportSkill", "BlockFraudSkill",
-    "IgnoreSpamSkill", "SendEmailSkill",
+    "ApplyRefundSkill",
+    "ApplyStripeRefundSkill",
+    "BlockFraudSkill",
+    "EscalateSupportSkill",
+    "IgnoreSpamSkill",
+    "SendEmailSkill",
+    "SkillBase",
+    "SkillResult",
 ]
 
 # Registry para lookup por nombre

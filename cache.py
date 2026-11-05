@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 cache.py — Cache LRU de decisiones System One.
 
@@ -20,7 +19,7 @@ import threading
 import time
 from collections import Counter
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 
 class DecisionCache:
@@ -45,7 +44,7 @@ class DecisionCache:
     def _key(state: str) -> str:
         return hashlib.sha1(state.encode("utf-8")).hexdigest()
 
-    def get(self, state: str) -> Optional[dict[str, Any]]:
+    def get(self, state: str) -> dict[str, Any] | None:
         """Devuelve la decisión cacheada o None."""
         with self._lock:
             k = self._key(state)
@@ -120,7 +119,7 @@ class DecisionCache:
 
 
 # Singleton — todos los procesos Python del mimo_patch comparten el mismo
-_CACHE: Optional[DecisionCache] = None
+_CACHE: DecisionCache | None = None
 _CACHE_LOCK = threading.Lock()
 
 

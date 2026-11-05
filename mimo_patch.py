@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 mimo_patch.py — Parche Unificado (Mimo Code) v3 final.
 
@@ -40,7 +39,7 @@ import argparse
 import json
 import os
 import sys
-from typing import Any, Optional
+from typing import Any
 
 # Resolve sibling imports when se ejecuta como script
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -104,8 +103,8 @@ def mimo_route(state: str, force_heavy: bool = False) -> dict[str, Any]:
       7. Si excepción → notification.notify_human(urgency=1.0) → degraded
     """
     # Imports perezosos para evitar dependencias circulares
-    from gate import gate_check, execute, CONFIG
     from cache import get_cache
+    from gate import CONFIG, execute, gate_check
     from notification import notify_human
 
     if not state or not state.strip():
@@ -278,7 +277,7 @@ def _cli() -> int:
 
     # ── dry-run (sin providers) ──────────────────────────────
     if args.cmd == "dry-run":
-        from gate import gate_check, CONFIG
+        from gate import CONFIG, gate_check
         g = gate_check(args.state, force_heavy=False)
         # Simula decision sin llamar a providers
         dry_decision = {
@@ -307,7 +306,7 @@ def _cli() -> int:
     # ── self-test ────────────────────────────────────────────
     if args.cmd == "self-test":
         try:
-            from gate import run_test_matrix_extended, CONFIG
+            from gate import CONFIG, run_test_matrix_extended
             base = args.state or "usuario intentó chargeback por error 502"
             out = run_test_matrix_extended(base, CONFIG["skills"]["allowed"])
             print(json.dumps(out, indent=2, ensure_ascii=False, default=str))

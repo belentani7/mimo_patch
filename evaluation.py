@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 evaluation.py — Hooks de evaluación para Braintrust y LangSmith.
 
@@ -9,11 +8,11 @@ Si no están configurados, los hooks son no-op — no rompe el flujo.
 """
 from __future__ import annotations
 
+import json
 import os
 import time
-import json
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 
 def _enabled(name: str) -> bool:
@@ -28,7 +27,7 @@ def log_decision(
     decision: dict[str, Any],
     latency_ms: float,
     provider: str,
-    error: Optional[str] = None,
+    error: str | None = None,
 ) -> dict[str, Any]:
     """
     Registra una decisión para evaluación posterior.
@@ -74,9 +73,11 @@ def log_decision(
 def _log_to_braintrust(entry: dict[str, Any]) -> None:
     """Log a Braintrust via autoamtch SDK."""
     try:
-        from braintrust import Eval  # type: ignore
         # Eval es pesado — para decisiones individuales, usamos Logger
-        from braintrust import Logger  # type: ignore
+        from braintrust import (
+            Eval,  # type: ignore
+            Logger,  # type: ignore
+        )
         logger = Logger(project="mimo_patch")
         logger.log(
             input=entry["state_preview"],

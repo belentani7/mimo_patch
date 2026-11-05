@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 glue/django_saleor_example.py — Ejemplo de "pegamento" Python.
 
@@ -20,7 +19,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path

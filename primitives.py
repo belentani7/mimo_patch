@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 primitives.py — Las 3 primitivas de Jev AI (Choice, Score, Boolean/Noul).
 
@@ -24,8 +23,6 @@ El router usará estos esquemas cuando invoque a TypeSafe/Jev.
 """
 from __future__ import annotations
 
-from typing import Any, Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -49,7 +46,7 @@ class Score(BaseModel):
         ge=0.0, le=1.0,
         description="Confianza en el nivel elegido [0,1]."
     )
-    score: Optional[float] = Field(
+    score: float | None = Field(
         default=None,
         description="Valor continuo interpolado [0, max_level]."
     )
@@ -109,6 +106,10 @@ def typed_boolean(statement: str) -> type[BaseModel]:
 
 
 __all__ = [
-    "Choice", "Score", "Noul",
-    "typed_choice", "typed_score", "typed_boolean",
+    "Choice",
+    "Noul",
+    "Score",
+    "typed_boolean",
+    "typed_choice",
+    "typed_score",
 ]

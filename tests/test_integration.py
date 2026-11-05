@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
 """
 Tests del CLI mimo_patch y de notification.
 """
-import os
-import sys
 import json
+import os
 import subprocess
+import sys
 import tempfile
-import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from mimo_patch import decide_action_plan
-from notification import notify_human, _sanitize_preview
+from notification import _sanitize_preview, notify_human
 
 
 class TestDecideActionPlan:

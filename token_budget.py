@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 token_budget.py — Pruning de tokens y gestión de presupuesto.
 
@@ -13,11 +12,8 @@ También calcula el coste estimado por provider.
 """
 from __future__ import annotations
 
-import json
 import os
 import re
-from typing import Any
-
 
 # Estimación rápida: 1 token ≈ 4 chars (inglés) o ≈ 2.5 chars (español)
 _CHARS_PER_TOKEN_ES = 2.5

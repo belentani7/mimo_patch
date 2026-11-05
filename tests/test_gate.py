@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 """
 Tests del gate heurístico.
 """
 import os
 import sys
-import pytest
 
 # Path del proyecto
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from gate import gate_check, run_test_matrix_extended, CONFIG
+from gate import CONFIG, gate_check, run_test_matrix_extended
 
 
 class TestGateSafe:

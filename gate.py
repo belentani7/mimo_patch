@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 gate.py — Gate heurístico de System One (0 tokens).
 
@@ -25,9 +24,8 @@ from __future__ import annotations
 import os
 import re
 import sys
-from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -121,7 +119,7 @@ class GateDecision(BaseModel):
         default=False,
         description="Si True, cargar fable_style.xml completo en lugar de light.txt."
     )
-    suggested_action: Optional[str] = Field(
+    suggested_action: str | None = Field(
         default=None,
         description="Acción sugerida por heurística (el router puede cambiarla).",
     )
@@ -129,7 +127,7 @@ class GateDecision(BaseModel):
         default=0.0, ge=0.0, le=1.0,
         description="Urgencia 0-1 estimada del estado.",
     )
-    block_reason: Optional[str] = Field(
+    block_reason: str | None = Field(
         default=None,
         description="Motivo del bloqueo si is_safe=False."
     )
@@ -137,7 +135,7 @@ class GateDecision(BaseModel):
         default=False,
         description="True si se detectó intento de Mental Reframing."
     )
-    sensitive_topic: Optional[str] = Field(
+    sensitive_topic: str | None = Field(
         default=None,
         description="Tema sensible detectado (no bloquea, solo etiqueta)."
     )
@@ -244,7 +242,7 @@ def _estimate_urgency(state: str) -> float:
     return max(0.0, min(1.0, score))
 
 
-def _keyword_action(state: str) -> Optional[str]:
+def _keyword_action(state: str) -> str | None:
     """Sugerencia de acción por keyword matching."""
     s = state.lower()
     # Spam y patrones de estafa (comprobar primero — son más específicos)
@@ -334,7 +332,7 @@ def run_test_matrix_extended(state: str, skills: list[str]) -> dict[str, Any]:
     """
     # Import local para evitar circular
     try:
-        from mimo_patch import mimo_route, decide_action_plan  # type: ignore
+        from mimo_patch import decide_action_plan, mimo_route  # type: ignore
     except Exception:
         # Si mimo_patch falla, definimos una versión local
         def decide_action_plan(is_safe, confidence, urgency):  # type: ignore
