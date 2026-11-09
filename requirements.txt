@@ -25,7 +25,7 @@ redis>=5.0.0            # memoria corto plazo (fallback JSONL si falta)
 psycopg[binary]>=3.1.0  # memoria largo plazo pgvector (fallback JSONL si falta)
 
 # ─── Skills reales (opcionales) ──────────────────────────────
-stripe>=10.0.0          # skill apply_stripe_refund (stub si falta)
+stripe>=16.1.0          # skill apply_stripe_refund (stub si falta)
 
 # ─── Tests ──────────────────────────────────────────────────
 pytest>=8.2.0
