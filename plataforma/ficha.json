@@ -1,0 +1,76 @@
+{
+  "esquema": "repo-forge/ficha/1",
+  "nombre": "mimo_patch",
+  "remoto": "https://github.com/belentani7/mimo_patch",
+  "arquetipo": "web-static",
+  "stack": "Python",
+  "modelo": "parche unificado de herramientas de código",
+  "publico": "usuarios de Mimo Code",
+  "techo": "conjunto de mejoras instalables y reversibles, con compatibilidad declarada",
+  "modulos": [
+    "Prompts XML",
+    "Tipado estricto",
+    "Routing",
+    "Instalador"
+  ],
+  "no_go": "parchear sin reversión",
+  "marca": {
+    "nombre": "MIMO PATCH",
+    "familia": "herramienta",
+    "paleta": {
+      "familia": "herramienta",
+      "bg": "#0f1419",
+      "surface": "#191e23",
+      "ink": "#e8eef6",
+      "muted": "#969ba2",
+      "accent": "#49ceff",
+      "accent2": "#a3e635",
+      "ok": "#15803d",
+      "warn": "#b45309",
+      "danger": "#b91c1c",
+      "contraste_ink_bg": 15.86,
+      "contraste_accent_bg": 10.19,
+      "accent_sobre_bg_ok": true
+    },
+    "narrativa": "Menos ceremonia, más resultado"
+  },
+  "paywall": {
+    "principio": "el binario es libre; se cobra el servicio, no el código",
+    "fases": 4
+  },
+  "medido": {
+    "archivos": 58,
+    "lineas": 5056,
+    "html": 3,
+    "tests": 5,
+    "bytes": 187733,
+    "lenguajes": {
+      "Python": 72.5,
+      "HTML": 10.1,
+      "Markdown": 6.7,
+      "JavaScript": 3.8,
+      "CSS": 2.9,
+      "JSON": 1.9
+    },
+    "fecha": "2026-11-10"
+  },
+  "gate": {
+    "pass": 34,
+    "fail": 0,
+    "skip": 15,
+    "cumplimiento": 100.0,
+    "fallos": []
+  },
+  "ajustes": {
+    "total": 61,
+    "aplicados": 51,
+    "ya_estaban": 10,
+    "fallos": 0
+  },
+  "esfuerzo_dias": 41,
+  "doctor": {
+    "ok": true,
+    "detalle": "35/35 comprobaciones en verde"
+  },
+  "huella": "21ea83373484e2c5"
+}

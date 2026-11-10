@@ -1,0 +1,31 @@
+{
+  "nombre": "mimo_patch",
+  "remoto": "https://github.com/belentani7/mimo_patch",
+  "tipo": "web-static",
+  "modelo": "parche unificado de herramientas de código",
+  "publico": "usuarios de Mimo Code",
+  "licencia": "MIT",
+  "medido": {
+    "archivos": 58,
+    "lineas": 5056,
+    "bytes": 187733,
+    "html": 3,
+    "tests": 5
+  },
+  "modulos": [
+    "Prompts XML",
+    "Tipado estricto",
+    "Routing",
+    "Instalador"
+  ],
+  "paleta": {
+    "bg": "#0f1419",
+    "ink": "#e8eef6",
+    "accent": "#49ceff"
+  },
+  "fuente": {
+    "ruta": "repos\\mimo_patch",
+    "fecha": "2026-11-10"
+  },
+  "generado_por": "repo-forge"
+}

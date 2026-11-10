@@ -1,4 +1,4 @@
-# MIMO PATCH — Parche Unificado (Mimo Code) v3
+﻿# MIMO PATCH — Parche Unificado (Mimo Code) v3
 
 > **Fusión de**: Fable 5.1 (XML structured prompts) + Pydantic strict typing + Jev AI (System One routing) + OpenCode MCP + Python glue code.
 >
@@ -259,3 +259,84 @@ Uso libre. Créditos a:
 ---
 
 *"Un LLM es un motor de creatividad. Jev es un motor de decisión. Usar uno para el trabajo del otro era el error que la industria cometió durante 4 años."*
+
+<!-- repo-forge:readme:inicio -->
+## Qué es
+
+**MIMO PATCH** — parche unificado de herramientas de código.
+
+Una herramienta que se puede auditar: dice qué hace, lo hace, y deja rastro de lo que hizo.
+
+## Estado medido
+
+| Dato | Valor |
+|---|---|
+| Lenguajes | Python, HTML, Markdown, JavaScript, CSS, JSON |
+| Archivos / líneas | 58 / 5056 |
+| Páginas HTML | 3 |
+| Tests detectados | 5 |
+| Cumplimiento de reglas | 34/34 (100.0%) |
+
+Todo lo anterior se midió en disco el 2026-11-10; no es una estimación.
+
+## Uso
+
+```bash
+python scripts/doctor.py   # verificación sin dependencias
+```
+
+## Estructura
+
+```
+__pycache__/
+assets/
+brand/
+data/
+docs/
+glue/
+install/
+opencode/
+plataforma/
+producto/
+```
+
+## Diseño de plataforma
+
+- Prompts XML
+- Tipado estricto
+- Routing
+- Instalador
+
+La ficha completa —máximo potencial, marca, fases de monetización y recursos— vive en
+[`plataforma/FICHA.md`](plataforma/FICHA.md). Los tokens de marca están en
+[`brand/tokens.css`](brand/tokens.css).
+
+## Reglas del proyecto
+
+Este repositorio sigue el catálogo oficial del ecosistema (`GH-*`, `WEB-*`, `ACC-*`,
+`SEO-*`, `COH-*`, `DEV-*`). El gate se ejecuta con:
+
+```bash
+python scripts/doctor.py
+```
+
+## Licencia
+
+MIT. Ver [`LICENSE`](LICENSE).
+<!-- repo-forge:readme:fin -->
+<!-- repo-forge:readme:fin -->
+<!-- repo-forge:readme:fin -->
+<!-- repo-forge:readme:fin -->
+
+## Resumen en español
+
+MIMO PATCH — parche unificado de herramientas de código.
+
+conjunto de mejoras instalables y reversibles, con compatibilidad declarada
+
+Este resumen se añadió para que el repositorio se pueda leer en el idioma del ecosistema.
+El contenido técnico completo sigue en el resto del documento.
+
+## Producto
+
+Oferta, precio y cobro: [`producto/OFERTA.md`](producto/OFERTA.md) · [`producto/precios.json`](producto/precios.json) · [`producto/landing.html`](producto/landing.html)
