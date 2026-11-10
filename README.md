@@ -1,4 +1,4 @@
-﻿# MIMO PATCH — Parche Unificado (Mimo Code) v3
+# MIMO PATCH — Parche Unificado (Mimo Code) v3
 
 > **Fusión de**: Fable 5.1 (XML structured prompts) + Pydantic strict typing + Jev AI (System One routing) + OpenCode MCP + Python glue code.
 >
