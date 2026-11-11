@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="MIMO PATCH">
+  <rect width="1200" height="630" fill="#0f1419"/>
+  <rect x="48" y="48" width="1104" height="534" rx="24" fill="none" stroke="#49ceff" stroke-width="2" opacity="0.45"/>
+  <text x="96" y="300" font-family="Georgia, serif" font-size="86" fill="#e8eef6">MIMO PATCH</text>
+  <text x="96" y="372" font-family="system-ui, sans-serif" font-size="34" fill="#969ba2">parche unificado de herramientas de código</text>
+  <rect x="96" y="430" width="120" height="6" fill="#49ceff"/>
+  <text x="96" y="520" font-family="ui-monospace, monospace" font-size="24" fill="#49ceff">belentani7 · 2026</text>
+</svg>

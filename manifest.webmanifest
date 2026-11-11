@@ -1,0 +1,17 @@
+{
+  "name": "MIMO PATCH",
+  "short_name": "MIMO PATCH",
+  "description": "parche unificado de herramientas de código",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#49ceff",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

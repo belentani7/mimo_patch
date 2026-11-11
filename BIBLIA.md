@@ -52,3 +52,51 @@ Proveer valor a través de tecnología moderna, código mantenible y experiencia
 - Monorepo o repositorio independiente según el producto
 - Despliegue por copia de archivos (cero build) salvo que se especifique lo contrario
 - Working trees respetados: no se sobrescriben cambios sin restaurar desde HEAD
+
+<!-- repo-forge:biblia:inicio -->
+# BIBLIA.md — mimo_patch
+
+Doctrina del producto del repositorio `mimo_patch` del ecosistema belentani7.
+
+## Visión
+
+conjunto de mejoras instalables y reversibles, con compatibilidad declarada
+
+## Misión
+
+Una herramienta que se puede auditar: dice qué hace, lo hace, y deja rastro de lo que hizo.
+
+## Público
+
+usuarios de Mimo Code
+
+## Stack
+
+sitio estático publicable tal cual · Python, HTML, Markdown, JavaScript, CSS, JSON
+
+## Módulos que la promesa exige
+
+- Prompts XML
+- Tipado estricto
+- Routing
+- Instalador
+
+## Reglas de desarrollo
+
+- Protocolo spec-first: PRD → SRS → Design Doc → ADR → Plan → Tests.
+- Un cambio, un resultado verificable.
+- Nada se afirma sin ejecución; lo no probado se declara como no probado.
+- Escritura solo con confirmación; nada destructivo.
+- Idioma del producto: español, salvo el público del repositorio.
+- Secreto fuera de disco, logs y manifiestos.
+
+## Lo que este repositorio no va a hacer
+
+parchear sin reversión
+
+## Convenciones
+
+`type(scope): resumen` — feat, fix, docs, chore, refactor, test, perf.
+
+<!-- repo-forge:biblia -->
+<!-- repo-forge:biblia:fin -->
