@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 token_budget.py — Pruning de tokens y gestión de presupuesto.
 

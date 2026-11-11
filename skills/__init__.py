@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 skills package — acciones ejecutables por mimo_route.
 

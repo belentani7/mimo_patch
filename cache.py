@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 cache.py — Cache LRU de decisiones System One.
 

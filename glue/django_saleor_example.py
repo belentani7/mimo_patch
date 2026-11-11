@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 glue/django_saleor_example.py — Ejemplo de "pegamento" Python.
 

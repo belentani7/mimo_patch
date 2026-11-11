@@ -259,3 +259,7 @@ Uso libre. Créditos a:
 ---
 
 *"Un LLM es un motor de creatividad. Jev es un motor de decisión. Usar uno para el trabajo del otro era el error que la industria cometió durante 4 años."*
+
+
+## Producto
+Véase `plataforma/OFERTA.md`, `plataforma/precios.json`, `plataforma/ONEPAGER.md`.

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 evaluation.py — Hooks de evaluación para Braintrust y LangSmith.
 

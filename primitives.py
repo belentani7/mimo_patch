@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 primitives.py — Las 3 primitivas de Jev AI (Choice, Score, Boolean/Noul).
 

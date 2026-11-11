@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 base.py — Interfaz común para todas las skills.
 """

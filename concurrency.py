@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 concurrency.py — Helpers de asincronía para el router.
 

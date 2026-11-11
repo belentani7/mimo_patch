@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Stripe refunds require an explicitly authorized, validated payment operation."""
 from __future__ import annotations
 

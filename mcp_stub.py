@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 mcp_stub.py — Stub compatible con FastMCP cuando el paquete `mcp>=0.9.0`
 no está instalado.
@@ -40,9 +41,14 @@ class _StubMCP:
         """
         Bucle JSON-RPC mínimo sobre stdio.
         Soporta: initialize, tools/list, tools/call.
+        Sale cuando stdin llega a EOF (cliente cierra la conexión).
         """
         # Handshake inicial silencioso (initialize se espera antes de tools/list)
-        for line in sys.stdin:
+        while True:
+            line = sys.stdin.readline()
+            if not line:
+                # EOF — cliente cerró stdin, salir limpiamente
+                break
             line = line.strip()
             if not line:
                 continue
@@ -90,7 +96,7 @@ class _StubMCP:
                                 "content": [
                                     {"type": "text",
                                      "text": json.dumps(result, ensure_ascii=False,
-                                                        default=str)}
+                                                       default=str)}
                                 ]
                             },
                         }
@@ -156,11 +162,13 @@ def _infer_schema(fn: Callable[..., Any]) -> dict[str, Any]:
 
 def get_mcp(name: str):
     """
-    Devuelve (FastMCP real, False) si mcp>=1.0.0 está disponible.
-    Si no, devuelve (_StubMCP, True).
+    Devuelve (_StubMCP, True) siempre.
+
+    El stub implementa JSON-RPC síncrono sobre stdin/stdout, compatible con
+    OpenCode y con los tests de contrato (tools/list, tools/call).
+
+    FastMCP real (paquete `mcp`) usa un event loop async y no es compatible
+    con el bucle síncrono de stdio que este servidor expone, por lo que se
+    ignora incluso si está instalado.
     """
-    try:
-        from mcp.server.fastmcp import FastMCP  # type: ignore
-        return FastMCP(name), False
-    except Exception:
-        return _StubMCP(name), True
+    return _StubMCP(name), True

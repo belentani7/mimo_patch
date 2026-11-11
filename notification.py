@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 notification.py — Alertas humanas cuando el router entra en degraded mode.
 

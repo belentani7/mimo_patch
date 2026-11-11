@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """block_fraud.py — Skill de bloqueo por fraude."""
 from __future__ import annotations
 

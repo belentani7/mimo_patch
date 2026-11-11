@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 router.py — SystemOneRouter con multi-provider fallback.
 

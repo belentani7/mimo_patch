@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 memory.py — Memoria jerárquica con fallback graceful.
 

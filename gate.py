@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 gate.py — Gate heurístico de System One (0 tokens).
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 providers.py — Catálogo de providers de IA soportados por SystemOneRouter.
 

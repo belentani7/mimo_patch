@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 profile.py — Perfil del usuario (Pedro Belentani) y su proyecto.
 

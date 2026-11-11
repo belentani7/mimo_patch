@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Tests del CLI mimo_patch y de notification.
 """
