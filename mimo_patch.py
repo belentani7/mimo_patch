@@ -279,16 +279,20 @@ def _cli() -> int:
     if args.cmd == "dry-run":
         from gate import CONFIG, gate_check
         g = gate_check(args.state, force_heavy=False)
-        # Simula decision sin llamar a providers
+        # Dry-run is a heuristic preview, never a fabricated action.
+        # Unknown requests must abstain; confidence is NOT a model probability.
+        dry_confidence = 0.0 if not g.is_safe else (
+            0.95 if g.suggested_action is not None else 0.0
+        )
         dry_decision = {
             "logic_trace": "dry_run_no_provider_call",
-            "chosen_action": g.suggested_action or "ignore_spam",
-            "confidence": 0.5 if g.use_heavy_prompt else 0.9,
+            "chosen_action": g.suggested_action,
+            "confidence": dry_confidence,
             "urgency_score": g.urgency_score,
             "is_safe_to_execute": g.is_safe,
             "plan": decide_action_plan(
                 g.is_safe,
-                0.5 if g.use_heavy_prompt else 0.9,
+                dry_confidence,
                 g.urgency_score,
             ),
             "gate": g.model_dump(),
