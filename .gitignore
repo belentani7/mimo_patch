@@ -1,3 +1,11 @@
+# Generated OS metadata, Python bytecode, and HTML reports
+._*
+__MACOSX/
+Desktop.ini
+desktop.ini
+htmlcov/
+playwright-report/
+
 # Dependencias
 node_modules/
 .venv/
